@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Calculate</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="./app.js" type="module"></script> -->
+    <script>
+	const $ = document;
+
+const button = $.getElementById("button");
+const refresh = $.getElementById("refresh");
+
+button.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  let fund = Number($.getElementById("input_mainFund").value);
+  let rate = Number($.getElementById("input_rate").value);
+  let period = Number($.getElementById("input_period").value);
+
+  let sumProfit = [];
+
+  if (fund == "" && rate == "" && period == "") {
+    alert("please fill the forms");
+  } else {
+    for (let i = 1; i <= period; i++) {
+      let rateNow = fund * (rate / 100);
+      fund += rateNow;
+      // console.log(`Day ${i}. ${Math.round(rateNow)} _ ${Math.round(fund)}`);
+      let result = `<li id="list_${i}" class="p-2 mb-4 w-auto h-10 flex justify-between items-center border-b-2 border-gray-300 text-slate-700 flex justify-between">
+      <div class="w-1/5 flex flex justify-start items-center">
+          <p class="text-center text-base text-blue-500">Day ${i}</p>
+      </div>
+      <div class="w-2/5 flex flex justify-center items-center">
+          <p class="text-center text-base text-green-500">Profit : <span class="text-gray-500">$ ${new Intl.NumberFormat(
+            "en-US",
+            { style: "decimal" }
+          ).format(rateNow.toFixed(2))}</span></p>
+      </div>
+      <div class="w-2/5 flex flex justify-end items-center">
+          <p class="text-center text-base text-orange-500">Fund : <span class="text-gray-500">$ ${new Intl.NumberFormat(
+            "en-US",
+            { style: "decimal" }
+          ).format(fund.toFixed(2))}</span></p>
+      </div>
+  </li>`;
+      let parent = $.querySelector("#parent");
+      parent.innerHTML += result;
+      sumProfit.push(rateNow);
+
+      if (i === period) {
+        let sum = sumProfit.reduce((acc, value) => {
+          return acc + value;
+        }, 0);
+
+        let parentFund = $.querySelector("#total_fund");
+        let resultFund = `<p id="span_fund" class="w-full h-auto text-sm text-center text-gray-700">$ ${new Intl.NumberFormat(
+          "en-US",
+          { style: "decimal" }
+        ).format(fund.toFixed(2))}</p>`;
+        parentFund.innerHTML += resultFund;
+
+        let parentProfit = $.querySelector("#total_profit");
+        let resultProfit = `<p id="span_profit" class="w-full h-auto text-sm text-center text-gray-700">$ ${new Intl.NumberFormat(
+          "en-US",
+          { style: "decimal" }
+        ).format(sum.toFixed(2))}</p>`;
+        parentProfit.innerHTML += resultProfit;
+
+        let parentDay = $.querySelector("#total_day");
+        let resultDay = `<p id="span_day" class="w-full h-auto text-sm text-center text-gray-700">$ ${new Intl.NumberFormat(
+          "en-US",
+          { style: "decimal" }
+        ).format((fund + sum).toFixed(2))}</p>`;
+        parentDay.innerHTML += resultDay;
+
+        $.querySelector(`#list_${i}`).style.borderColor = "#14b8a6";
+      }
+    }
+  }
+});
+
+refresh.addEventListener("click", (e) => {
+  window.location.reload();
+});
+
+// new Intl.NumberFormat('en-US', {style : "decimal" }).format(987654321);
+
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="w-full h-16 bg-teal-600 flex justify-center items-center shadow-lg">
+        <h1 class="text-3xl font-bold text-white">Rate Calculate</h1>
+    </header>
+    <section class="mx-auto mt-4 p-4 w-full lg:w-3/4 xl:w-1/2 h-auto md:flex">
+        <div id="forms" class="md:mr-2 w-full h-auto md:w-1/2">
+            <form action="" class="mx-auto w-auto h-auto flex flex-wrap">
+                <div class="mb-0 w-full h-20">
+                    <h4 class="text-gray-800 font-bold">Main Fund ($)</h4>
+                    <input type="number" id="input_mainFund" placeholder="example: 100" class="px-1 w-full h-10 text-slate-700 tracking-wide font-bold border-b-4 border-teal-500 rounded-md">
+                </div>
+                <div class="mb-0 w-full h-20">
+                    <h4 class="text-gray-800 font-bold">Rate (%)</h4>
+                    <input type="number" id="input_rate" placeholder="example: 10" class="px-1 w-full h-10 text-slate-700 tracking-wide font-bold border-b-4 border-teal-500 rounded-md">
+                </div>
+                <div class="mb-0 w-full h-20">
+                    <h4 class="text-gray-800 font-bold">Period (Day)</h4>
+                    <input type="number" id="input_period" placeholder="example: 90" class="px-1 w-full h-10 text-slate-700 tracking-wide font-bold border-b-4 border-teal-500 rounded-md">
+                </div>
+                <div class="mb-0 w-full h-auto flex justify-between items-center">
+                    <div id="total_fund" class="mr-2 p-1 w-1/3 h-full border-2 rounded-lg border-orange-500 flex-col justify-center items-center">
+                        <p id="total_fund_p" class="w-full h-auto text-sm text-center text-gray-400 font-bold">Sum Total Fund :)</p>
+                    </div>
+                    <div id="total_profit" class="p-1 w-1/3 h-full border-2 rounded-lg border-green-500 flex-col justify-center items-center">
+                        <p id="total_profit_p" class="w-full h-auto text-sm text-center text-gray-400 font-bold">Sum Total Profit ;)</p>
+                    </div>
+                    <div id="total_day" class="ml-2 p-1 w-1/3 h-full border-2 rounded-lg border-blue-500 flex-col justify-center items-center">
+                        <p id="total_day_p" class="w-full h-auto text-sm text-center text-gray-400 font-bold">Sum Total</p>
+                    </div>
+                </div>
+                <div class="w-full h-20 flex justify-center items-center">
+                    <input type="button" value="calculate" id="button" class="mr-2 w-1/2 h-12 rounded-xl bg-teal-500 text-white font-bold text-lg transition-all hover:cursor-pointer hover:shadow-lg hover:shadow-teal-200 active:bg-teal-400 border-2 border-teal-500 active:border-teal-700 active:text-teal-700"/>
+                    <input type="button" value="clear" id="refresh" class="ml-2 w-1/2 h-12 rounded-xl border-teal-500 text-teal-700 font-bold text-lg transition-all hover:cursor-pointer border-2 border-teal-500"/>
+                </div>
+            </form>
+        </div>
+        <div id="lists" class=" md:ml-2 w-full h-auto md:w-1/2">
+            <h1 class="text-gray-900 text-xl">Lists</h1>
+            <ol id="parent" class="mx-auto w-full h-96 overflow-y-scroll">
+                <!-- <li id="list" class="p-2 mb-4 w-auto h-10 flex justify-between items-center border-b-2 border-gray-300 text-slate-700 flex justify-between">
+                    <div class="w-1/3 flex flex justify-start items-center">
+                        <p class="text-center text-lg text-gray-600">Day 1</p>
+                    </div>
+                    <div class="w-1/3 flex flex justify-center items-center">
+                        <p class="text-center text-lg text-gray-600">Profit: 1$</p>
+                    </div>
+                    <div class="w-1/3 flex flex justify-end items-center">
+                        <p class="text-center text-lg text-gray-600">Fund: 1$</p>
+                    </div>
+                </li> -->
+            </ol>
+        </div>
+    </section>
+</body>
+</html>
